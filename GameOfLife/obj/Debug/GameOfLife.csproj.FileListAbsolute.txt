@@ -1,0 +1,10 @@
+C:\Users\barge\lambda-school\BW-Conways-GOL\GameOfLife\obj\Debug\GameOfLife.csprojAssemblyReference.cache
+C:\Users\barge\lambda-school\BW-Conways-GOL\GameOfLife\obj\Debug\GameOfLife.csproj.CoreCompileInputs.cache
+C:\Users\barge\lambda-school\BW-Conways-GOL\GameOfLife\bin\Debug\GameOfLife.exe.config
+C:\Users\barge\lambda-school\BW-Conways-GOL\GameOfLife\bin\Debug\GameOfLife.exe
+C:\Users\barge\lambda-school\BW-Conways-GOL\GameOfLife\bin\Debug\GameOfLife.pdb
+C:\Users\barge\lambda-school\BW-Conways-GOL\GameOfLife\bin\Debug\FNA.dll
+C:\Users\barge\lambda-school\BW-Conways-GOL\GameOfLife\obj\Debug\GameOfLife.csproj.CopyComplete
+C:\Users\barge\lambda-school\BW-Conways-GOL\GameOfLife\obj\Debug\GameOfLife.exe
+C:\Users\barge\lambda-school\BW-Conways-GOL\GameOfLife\obj\Debug\GameOfLife.pdb
+C:\Users\barge\lambda-school\BW-Conways-GOL\GameOfLife\bin\Debug\Content\sprite.png
