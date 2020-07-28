@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using System;
 
 class Program : Game
@@ -12,10 +13,24 @@ class Program : Game
     double millisecondsPerFrame = 250;
     double timeSinceLastUpdate = 0;
 
+
+    Color[] colors = {
+        Color.Black,
+        Color.Red,
+        Color.Green,
+        Color.Blue
+    };
+
+    Color currentColor;
+
     bool[,] gameBoard = new bool[80, 120];
     bool[,] nextGameBoard = new bool[80, 120];
 
     Texture2D cellSprite;
+
+
+    // Input
+    private KeyboardState keyboardPrev = new KeyboardState();
 
     public void Clear(bool[,] board)
     {
@@ -26,6 +41,34 @@ class Program : Game
                 board[row, col] = false;
             }
         }
+    }
+
+
+    public void RandomizeBoard()
+    {
+        Random r = new Random(DateTime.Now.Millisecond); // generate with seed
+        for (int row = 0; row < rows; row++)
+        {
+            for (int col = 0; col < cols; col++)
+            {
+                if (r.NextDouble() > 0.5f)
+                {
+                    gameBoard[row, col] = true;
+                    Console.WriteLine(gameBoard[row, col]);
+                }
+                else
+                {
+                    gameBoard[row, col] = false;
+                }
+            }
+        }
+    }
+
+    public Color PickColor()
+    {
+        Random r = new Random();
+        int index = r.Next(colors.Length);
+        return colors[index];
     }
 
     public int CountAlive(int row, int col)
@@ -102,24 +145,7 @@ class Program : Game
         /* This is a nice place to start up the engine, after
 		 * loading configuration stuff in the constructor
 		 */
-
-        Random r = new Random(DateTime.Now.Millisecond); // generate with seed
-        for (int row = 0; row < rows; row++)
-        {
-            for (int col = 0; col < cols; col++)
-            {
-                if (r.NextDouble() > 0.5f)
-                {
-                    gameBoard[row, col] = true;
-                    Console.WriteLine(gameBoard[row, col]);
-                }
-                else
-                {
-                    gameBoard[row, col] = false;
-                }
-            }
-        }
-
+        RandomizeBoard();
 
         base.Initialize();
     }
@@ -139,8 +165,7 @@ class Program : Game
     }
 
     protected override void Update(GameTime gameTime)
-    {
-
+    { 
         // wait to update the game (game speed)
         timeSinceLastUpdate += gameTime.ElapsedGameTime.TotalMilliseconds;
         if (timeSinceLastUpdate >= millisecondsPerFrame)
@@ -189,7 +214,33 @@ class Program : Game
             }
         }
 
+        // Input handler
+        KeyboardState keyboardCur = Keyboard.GetState();
 
+        if (keyboardCur.IsKeyDown(Keys.C) && keyboardPrev.IsKeyUp(Keys.C))
+        {
+            // C was pressed
+            currentColor = PickColor();
+        }
+        if (keyboardCur.IsKeyDown(Keys.R) && keyboardPrev.IsKeyUp(Keys.R))
+        {
+            // R was pressed
+            RandomizeBoard();
+        }
+
+        if (keyboardCur.IsKeyDown(Keys.W) && keyboardPrev.IsKeyUp(Keys.W))
+        {
+            // increase game speed
+            millisecondsPerFrame -= 30; 
+        }
+
+        if (keyboardCur.IsKeyDown(Keys.S) && keyboardPrev.IsKeyUp(Keys.S))
+        {
+            // decrease game speed
+            millisecondsPerFrame += 30;
+        }
+
+        keyboardPrev = keyboardCur;
 
         // Run game logic in here. Do NOT render anything here!
         base.Update(gameTime);
@@ -213,7 +264,7 @@ class Program : Game
 
                 if (gameBoard[row, col])
                 {
-                    spriteBatch.Draw(cellSprite, pos, Color.Black);
+                    spriteBatch.Draw(cellSprite, pos, currentColor);
                 }
                 else
                 {
