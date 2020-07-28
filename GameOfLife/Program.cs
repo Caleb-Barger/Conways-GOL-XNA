@@ -4,208 +4,226 @@ using System;
 
 class Program : Game
 {
-	GraphicsDeviceManager gdm;
-	SpriteBatch spriteBatch;
+    GraphicsDeviceManager gdm;
+    SpriteBatch spriteBatch;
 
-	int rows = 100;
-	int cols = 100;
+    int rows = 80;
+    int cols = 120;
+    double millisecondsPerFrame = 250;
+    double timeSinceLastUpdate = 0;
 
-	bool[,] gameBoard = new bool[100, 100];
+    bool[,] gameBoard = new bool[80, 120];
+    bool[,] nextGameBoard = new bool[80, 120];
 
-	Texture2D cellSprite;
+    Texture2D cellSprite;
 
-	public void Clear(bool[,] board)
+    public void Clear(bool[,] board)
     {
-		for (int row=0; row < rows; row++)
+        for (int row = 0; row < rows; row++)
         {
-			for (int col=0; col < cols; col++)
+            for (int col = 0; col < cols; col++)
             {
-				board[row, col] = false;
+                board[row, col] = false;
             }
         }
     }
 
-	public int CountAlive(int row, int col)
+    public int CountAlive(int row, int col)
     {
-		int count = 0;
+        int count = 0;
 
-		if ((col > 0) && (row > 0) && gameBoard[row - 1, col -1]) {
-			count++;
-        }
-
-		if ((row > 0) && gameBoard[row -1, col])
+        if ((col > 0) && (row > 0) && gameBoard[row - 1, col - 1])
         {
-			count++;
+            count++;
         }
 
-		if ((row > 0) && (col < cols - 1) && gameBoard[row -1, col + 1])
+        if ((row > 0) && gameBoard[row - 1, col])
         {
-			count++;
+            count++;
         }
 
-		if ((col > 0) && gameBoard[row, col - 1]) // HERE <-----
+        if ((row > 0) && (col < cols - 1) && gameBoard[row - 1, col + 1])
         {
-			count++;
+            count++;
         }
 
-		if (col < (cols - 1) && gameBoard[row, col + 1])
+        if ((col > 0) && gameBoard[row, col - 1]) // HERE <-----
         {
-			count++;
+            count++;
         }
 
-		if ((col > 0) && (row < rows - 1) && gameBoard[row + 1 ,col - 1])
+        if (col < (cols - 1) && gameBoard[row, col + 1])
         {
-			count++;
+            count++;
         }
 
-		if (row < (rows - 1) && gameBoard[row + 1, col]) {
-			count++;
-        }
-
-		if (col < (cols - 1) && row < (rows - 1) && gameBoard[row + 1, col])
+        if ((col > 0) && (row < rows - 1) && gameBoard[row + 1, col - 1])
         {
-			count++;
+            count++;
+        }
+
+        if (row < (rows - 1) && gameBoard[row + 1, col])
+        {
+            count++;
+        }
+
+        if (col < (cols - 1) && row < (rows - 1) && gameBoard[row + 1, col])
+        {
+            count++;
         }
 
 
-		return count;
+        return count;
     }
 
 
-	static void Main(string[] args)
-	{
-		using (Program g = new Program())
-		{
-			g.Run();
-		}
-	}
+    static void Main(string[] args)
+    {
+        using (Program g = new Program())
+        {
+            g.Run();
+        }
+    }
 
-	private Program()
-	{
-		GraphicsDeviceManager gdm = new GraphicsDeviceManager(this);
-		Content.RootDirectory = "Content";
+    private Program()
+    {
+        gdm = new GraphicsDeviceManager(this);
+        Content.RootDirectory = "Content";
 
-		// Typically you would load a config here...
-		gdm.PreferredBackBufferWidth = 1000;
-		gdm.PreferredBackBufferHeight = 1000;
-		gdm.IsFullScreen = false;
-		gdm.SynchronizeWithVerticalRetrace = true;
-	}
+        // Typically you would load a config here...
+        gdm.PreferredBackBufferWidth = 1200;
+        gdm.PreferredBackBufferHeight = 800;
+        gdm.IsFullScreen = false;
+        gdm.SynchronizeWithVerticalRetrace = true;
+    }
 
-	protected override void Initialize()
-	{
-		/* This is a nice place to start up the engine, after
+    protected override void Initialize()
+    {
+        /* This is a nice place to start up the engine, after
 		 * loading configuration stuff in the constructor
 		 */
 
-		Random r = new Random(DateTime.Now.Millisecond); // generate with seed
-		for (int row = 0; row < rows; row++)
-		{
-			for (int col = 0; col < cols; col++)
-			{
-				if (r.NextDouble() > 0.5f)
+        Random r = new Random(DateTime.Now.Millisecond); // generate with seed
+        for (int row = 0; row < rows; row++)
+        {
+            for (int col = 0; col < cols; col++)
+            {
+                if (r.NextDouble() > 0.5f)
                 {
-					gameBoard[row, col] = true;
-                } else
-                {
-					gameBoard[row, col] = false;
+                    gameBoard[row, col] = true;
+                    Console.WriteLine(gameBoard[row, col]);
                 }
-			}
-		}
+                else
+                {
+                    gameBoard[row, col] = false;
+                }
+            }
+        }
 
-		base.Initialize();
-	}
 
-	protected override void LoadContent()
-	{
-		// Load textures, sounds, and so on in here...
-		spriteBatch = new SpriteBatch(GraphicsDevice);
-		cellSprite = Content.Load<Texture2D>("sprite");
-		base.LoadContent();
-	}
+        base.Initialize();
+    }
 
-	protected override void UnloadContent()
-	{
-		// Clean up after yourself!
-		base.UnloadContent();
-	}
+    protected override void LoadContent()
+    {
+        // Load textures, sounds, and so on in here...
+        spriteBatch = new SpriteBatch(GraphicsDevice);
+        cellSprite = Content.Load<Texture2D>("sprite");
+        base.LoadContent();
+    }
 
-	protected override void Update(GameTime gameTime)
-	{
-		//for (int row = 0; row < rows; row++)
-		//{
+    protected override void UnloadContent()
+    {
+        // Clean up after yourself!
+        base.UnloadContent();
+    }
 
-		//	bool[,] nextGameBoard = (bool[,])gameBoard.Clone();
+    protected override void Update(GameTime gameTime)
+    {
 
-		//	Clear(nextGameBoard);
-		//	for (int col = 0; col < cols; col++)
-		//	{
-		//		int count = CountAlive(row, col);
+        // wait to update the game (game speed)
+        timeSinceLastUpdate += gameTime.ElapsedGameTime.TotalMilliseconds;
+        if (timeSinceLastUpdate >= millisecondsPerFrame)
+        {
 
-		//		if (gameBoard[row, col])
-  //              {
-		//			if (count < 2)
-  //                  {
-		//				nextGameBoard[row, col] = false;
-  //                  }
+            timeSinceLastUpdate = 0;
 
-		//			if ((count  == 2) || (count == 3))
-  //                  {
-		//				nextGameBoard[row, col] = true;
-  //                  }
+            for (int row = 0; row < rows; row++)
+            {
+                //Clear(gameBoard);
 
-		//			if (count > 3)
-  //                  {
-		//				nextGameBoard[row, col] = false;
-  //                  }
-  //              } else
-  //              {
-		//			if (count == 3)
-  //                  {
-		//				nextGameBoard[row, col] = true;
-  //                  }
-  //              }
-		//	}
+                for (int col = 0; col < cols; col++)
+                {
+                    int count = CountAlive(row, col);
 
-  //          bool[,] temp;
-  //          temp = gameBoard;
-		//	gameBoard = nextGameBoard;
-		//	nextGameBoard = temp;
+                    if (gameBoard[row, col])
+                    {
+                        if (count < 2)
+                        {
+                            gameBoard[row, col] = false;
+                        }
 
-		//}
+                        if ((count == 2) || (count == 3))
+                        {
+                            gameBoard[row, col] = true;
+                        }
+
+                        if (count > 3)
+                        {
+                            gameBoard[row, col] = false;
+                        }
+                    }
+                    else
+                    {
+                        if (count == 3)
+                        {
+                            gameBoard[row, col] = true;
+                        }
+                    }
+                }
+
+                //bool[,] temp;
+                //temp = gameBoard;
+                //gameBoard = nextGameBoard;
+                //nextGameBoard = temp;
+            }
+        }
+
+
 
         // Run game logic in here. Do NOT render anything here!
         base.Update(gameTime);
-	}
+    }
 
-	protected override void Draw(GameTime gameTime)
-	{
-		// Render stuff in here. Do NOT run game logic in here!
-		GraphicsDevice.Clear(Color.Black);
+    protected override void Draw(GameTime gameTime)
+    {
+        // Render stuff in here. Do NOT run game logic in here!
+        GraphicsDevice.Clear(Color.Black);
 
-		spriteBatch.Begin();
+        spriteBatch.Begin();
 
-		for (int row = 0; row < rows; row++)
-		{
-			for (int col = 0; col < cols; col++)
-			{
-				Vector2 pos = new Vector2();
+        for (int row = 0; row < rows; row++)
+        {
+            for (int col = 0; col < cols; col++)
+            {
+                Vector2 pos = new Vector2();
 
-				pos.X = col * (cellSprite.Width + 1);
-				pos.Y = row * (cellSprite.Height + 1);
+                pos.X = col * (cellSprite.Width + 1);
+                pos.Y = row * (cellSprite.Height + 1);
 
-				if (gameBoard[row, col])
+                if (gameBoard[row, col])
                 {
-					spriteBatch.Draw(cellSprite, pos, Color.Black);
-                } else
-                {
-					spriteBatch.Draw(cellSprite, pos, Color.White);
+                    spriteBatch.Draw(cellSprite, pos, Color.Black);
                 }
-			}
-		}
+                else
+                {
+                    spriteBatch.Draw(cellSprite, pos, Color.White);
+                }
+            }
+        }
 
-		spriteBatch.End();
+        spriteBatch.End();
 
-		base.Draw(gameTime);
-	}
+        base.Draw(gameTime);
+    }
 }
